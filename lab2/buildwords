@@ -1,0 +1,12 @@
+#!/bin/bash
+sed '/<td>.*<\/td>/!d'| sed "s/\`/'/g" | sed '1~2d' | sed 's/<\/*td>//g' | sed 's/<\/*u>//g' | tr -s [:upper:] [:lower:] | tr -s ' ,' '\n' | sed "/[^pk\'mnwlhaeiou]/d" | sort -u 
+
+#steps
+#delete everything that is not between <td> and <\td>
+#replace ` with '
+#delete odd lines(English words)
+#delete <td> and <u> tags
+#change all uppercase letter to lower case
+#substitude all space and , with newline
+#delete all entries that contain letters other than Hawaiian letters.
+#sort the file with no duplicate entries

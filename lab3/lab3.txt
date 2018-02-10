@@ -1,0 +1,64 @@
+1.Download and decompress
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+tar -xzvf coreutils-7.6.tar.gz
+
+
+2.compile and install
+ command: ./configure --prefix /u/eng/class/classjsh/Desktop/
+ CS35L/lab3/coreutils-7.6
+why: to check details about machine before installation and create make file
+
+command: make
+why: to compile all the program to create executables in current temporary
+directory
+
+command: make install
+why: copy executables into final directories
+
+3. reproduce bug
+cd bin
+I use ./ls -l to run the installed ls command. Since the locale setting
+in the server is already en_US.UTF-8, I can just run the above commands
+to reproduce the bug.
+
+4.patch
+patch -p1 < Bpatch.diff    since the patch given has path a/src/ls.c
+b/src/ls.c and a/NEWS b/News, I need to ignore one slash only to use the right
+ path from the current diectory. So I use -p1 option.
+
+5.
+
+I typed make command. Then it exectues make all in lib, make all in src,
+ make all in doc, make all in man, make all in po,
+ make all in tests and make all in gnulib-tests.
+ These commands have to be executed to check all the places to find files
+ related to ls.c and apply the changes to them. After ls.c is changed,
+ all the files related to ls.c need to be recompiled. And from the output,
+ I found seven files are changed: ls.o, dir, vdir, ls, dir.1, vdir.1, ls.1
+
+6. 
+I use touch testNew to create a file called testNew which is just modified
+and touch -t 199001010101 to create a file called testOld that
+at least one year old. 
+
+Then
+
+I use src/ls -l testNew to get the correct output:
+-rw-r--r-- 1 classjsh class 0 Apr 21 18:07 testNew
+
+I use bin/ls -l testNew to get the wrong output:
+-rw-r--r-- 1 classjsh class 0 2017-04-21 18:07 testNew
+
+I use src/ls -l testOld to get the correct output:
+-rw-r--r-- 1 classjsh class 0 Jan  1  1990 testOld
+
+I use bin/ls -l testOld to get the wrong output:
+-rw-r--r-- 1 classjsh class 0 1990-01-01 01:01 testOld
+
+So after the patch, the ls behaves correctly.
+And the difference between running correct ls command on the
+ new file and a file older than a year is that the output will
+not show the hour and minute the old file is created. It just show
+the year, month and day when the old file is created. 
+
+

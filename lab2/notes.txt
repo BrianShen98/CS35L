@@ -1,0 +1,67 @@
+wc: word count
+comm: compare two sorted files
+tr: translate or delete characters(the mapping is one to one)
+echo passabc | tr string1 string2
+if string1 is smaller than string2 (string1: abcs string2:def),will use the last char in string2 to replace
+string2
+
+if want to delete, use -d
+
+echo "passabc" | tr -d 'abc' -->result: pass
+echo "password_124" | tr -d [:alpha:]//delete all alpha
+
+echo ..... | tr -dc [:alpha:]//delete everything except alpha     -c complement
+echo "abc_xyz" | tr -c 'abc' 'kyz'  -> abczzzzz   //replace the complement of abc with kyz(so f-z will be replaced with z)
+ 
+echo "Hello    World" | tr -s " "  " "
+
+tr -s replace all the occurence of a char with one char.
+echo 'helollo' | tr -s 'l' 'd'// hedodo
+
+sed: stream editor, modifies the input as specified by the commands 
+
+substitution -  s/regex/replacement/flags
+sed s/day/ moght/g < oldFile > newFile  
+  substitute/pattern1/pattern2/g: replace all
+
+d for delete, p for print
+sed '2,18d'  TheFile
+sed -n '2,4p' testSed// -n prevent implicit printing(since will print whatever in pattern buffer??)
+
+-e proceed with more command?
+sed -e '1p' -e '3p' file.txt
+
+sed '1~3d' file.txt
+sed '1,20 s/Johnson/White/g' file.txt
+sed '/regex/!d' file.txt
+
+
+sed '1~3d' file.txt
+
+expr 1+1// evaluate an expression
+
+$ is like dereference
+
+test 4 -gt 3
+echo $?	   // ? is the exit status of the last command   0 true  1 false   >1 error
+\{x,y\} match x to y occurences of the preceding char
+\{x\} match exactly x occurence
+\{x,\} match x or more occurence
+grep ^pattern$ will search for lines that just contains 'pattern'
+^ start of line
+$ end of line
+
+sed does not modify thing
+
+''-- literal meaning of all within ''
+
+backquote `` execute the command        echo `ls` will print the result of ls
+$2 access the second argument of the script
+script argument starts with 1    $1
+
+if there is a single quote present in sed command, use an alternative enclosing
+quote(i.e. double quote).
+a[@] access the entire array
+if want the value     ${arr[2]}    value with index $arr[0]
+
+

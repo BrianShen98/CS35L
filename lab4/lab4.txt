@@ -1,0 +1,129 @@
+1.get the old version
+wget http://web.cs.ucla.edu/classes/spring17/cs35L/assign
+/coreutils-with-bug.tar.gz
+
+tar -xzvf coreutils-with-bug.tar.gz
+
+then I use ./configure --prefix='the absolute path to my current dir' to check
+environment variables and crate Makefile.
+
+when I use make to compile all the source file, the compilation
+failed. It shows that:
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec __times[2]) __THROW;
+
+So the declaration of futimens in stat.h is inconsistent with the one 
+in utimens.h. The first one only has two parameters while the second one
+has three. It might be the case that two different functions happened to have
+same names.
+
+2. apply renaming patch
+I copied the patch file to patch.diff. And I found that all the names
+in the patch have an extra ~. So I used M-% to replace all of them.
+Then I use the command patch -p0 < patch.diff to apply the patch. 
+I used make again and it compile successfully. Then I used make install
+to put those executables to the final bin directories.
+The patch file fixes the problem mentioned above by changing the name of
+one of the functions that have naming conflict. 
+
+3.finding the bug
+I created those files in tmp with the given instructions. Then I use the command
+gdb ls to open gdb. Since ls -l list all the files sorted by name, I know the
+problem should be with -t, namely the modification time.
+I first used 'info functions' to see all the functions involved. And I
+found compare_mtime(V,V) function, which might be related to the problem.
+So I set a break point on it by using 'break compare_mtime'. Then I typed
+run -lt wwi-armistice now now1, and it stopped at that location. Since it only
+has one line, which calls cmp_mtime function, I use 'step' to enter that function.
+I use 'list' to find the definition of that func, and find that it calls another
+function timespec_cmp, so I 'step' into timespec_cmp. Then I use list to find that
+it actually calculates the difference between two files's modification time. So
+it might be here that goes wrong.
+
+I then use 'bt' to trace the calling stack, and found the result:
+#0  timespec_cmp (b=..., a=...) at ../lib/timespec.h:48
+#1  cmp_mtime (cmp=0x404350 <xstrcoll>, b=0x617250, a=0x6171a0) at ls.c:2880
+#2  compare_mtime (a=0x6171a0, b=0x617250) at ls.c:2884
+#3  0x00007ffff7a53ab3 in msort_with_tmp.part.0 () from /lib64/libc.so.6
+#4  0x00007ffff7a53a28 in msort_with_tmp.part.0 () from /lib64/libc.so.6
+#5  0x00007ffff7a53e07 in qsort_r () from /lib64/libc.so.6
+#6  0x0000000000404148 in sort_files () at ls.c:3034
+#7  0x000000000040360b in main (argc=5, argv=<optimized out>) at ls.c:1259
+
+It started from ls.c:1259. So I use 'break ls.c:1259' to set a breakpoint there.
+Then I poked around and by steping into a function called extract_dirs_from_files
+and using list to see the code, I found argv are put into an array of structure
+named files. and I used print files[0] files[1] files[2]to find that
+ tv_sec variable in st_mtim is what been used to calculate diff in cmp_time,
+and tv_sec in now and now1 are large positive value while the variable in 
+wwi-armistice is a large negative value. I guess it might be an overflow problem.
+
+To confirm my hypothesis,I 'disable 2' to disable the break point and
+ run ls from beginning. I found that the addresses passed to compare_mtime
+is the second and third arguments specified at command line by comparing
+the addresses with the result of print &files[0]/[1]/[2]. So I use the 'finish'
+command to see the return value, which calculate the difference of tv_sec
+of those two arguments. I found that when comparing wwi-armistice with other file,
+return value is different from the result it should be. So I wrote a program to
+calculate the difference between the large positive and negative number to confirm
+my guess. And it turns out that the result did overflow and thus have opposite sign
+than the result supposed to be. That's what lead to an opposite comparison result.
+At this point, I found the cause of the problem.   
+
+4. fix the bug
+Since gdb shows that timespec_cmp is in /lib/timespec.h:48, I use cp timespec.h 
+modtimespec.h to copy the content into another file. Then I added code 
+in timespec_cmp():
+
+  if((a.tv_sec > 0 && b.tv_sec < 0 && diff < 0) || 
+(a.tv_sec < 0 && b.tv_sec > 0 && diff > 0))
+    diff = a.tv_sec;
+
+to prevent overflow and set diff to a value with correct sign.  
+
+5. producing patch
+I used 'cd ..' and then diff -u ./lib/timespec.h ./lib/modtimespec.h > lab4.diff
+to produce the patch. Then I used emacs lab4.diff to open the file,
+and changed the name path of two file to a/lib/timespec.h and b/lib/timespec.h,
+so that users can use patch -p1 < lab4.diff to properly substitude the timespec.h
+Then I added the changeLog at the top of lab4.diff:
+
+2017-04-28 Jingyue Shen <brainshen@g.ucla.edu>
+
+    * lib/timespec.h: use a conditional statement to prevent overflow 
+      		      when comparing modification time of two files.
+		      This change eliminates the overflow problem caused
+		      by ancient files.
+
+Then I used patch -p1 < lab4.diff to apply the patch and found that ls -lt
+works properly now.
+
+6. reproducing the bug on SEASnet Linux servers.
+I used:
+	cd ~
+	touch -d '1918-11-11 11:00 GMT' wwi-armistice
+	touch now
+	sleep 1
+	touch now1
+to create those files on home directory. 
+Then I used ls -lt wwi-armistice now now1 and the output is:
+
+-rw-r--r-- 1 classjsh class 0 Dec 17  2054 wwi-armistice
+-rw-r--r-- 1 classjsh class 0 Apr 28 17:05 now1
+-rw-r--r-- 1 classjsh class 0 Apr 28 17:04 now
+
+So SEASnet server cannot handle the bug properly. 
+Since timestamps are represented as seconds since Unix Epoch,
+those acient files will have negative timestamp if using signed representation.
+The problem is that SEASnet NFS filesystem has unsigned 32-bit time stamps. So
+those acient files with value of 1 in signed bit of the timestamp 
+will be treated as extremely large positive timestamp. So the date shows to users
+will be far in the future.  
+

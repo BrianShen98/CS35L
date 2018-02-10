@@ -1,0 +1,95 @@
+1. sort the words
+sort /usr/share/dict/words > words
+
+2. get the HTML
+wget web.cs.ucla.edu/classes/
+spring17/cs35L/assign/assign2.html
+
+3. tr command
+
+a. The -c command outputs letters normally and
+ replace everything other than letters 
+with new line characters.
+
+b. This command output the words in HTML
+ line by line without extra newline character
+ between them, Since -cs command replaces all
+ consecutive characters that are not letters
+(the effect of -c) with a single corresponding
+ character(the effect of -s) 
+specified in SET2( in this case, the
+ newline character).
+
+c.This command output the result in b in sorted
+ order, since | will treate the command before it
+ as input to the second command.
+
+d. This command output the result in b in sorted order
+ but without repetition of the same word. Since sort
+ -u will only output the first word among the words 
+with the same order.
+
+e.This command output three columns. Column 1: contains
+ lines unique to FILE1.
+Column 2: contains lines unique to FILE2. 
+Column 3: contains lines common to both
+files. This command use the result in d
+ as input FILE1 and words as FILE2 
+according to the usage of '|' command.
+
+f.This command only output lines that is unique to FILE1, 
+which is the result of d in this case, since comm -23
+ supress the output of lines that are unique to
+words and common to both files.
+
+4.Hawaiian Dictionary
+
+#!/bin/bash
+sed '/<td>.*<\/td>/!d'| 
+sed "s/\`/'/g" |
+ sed '1~2d' | 
+sed 's/<\/*td>//g' |
+ sed 's/<\/*u>//g' | 
+tr -s [:upper:] [:lower:] | 
+tr -s ' ,' '\n' | 
+sed "/[^pk\'mnwlhaeiou]/d" |
+ sort -u 
+
+#steps
+#delete everything that is not between
+ <td> and <\td>
+#replace ` with '
+#delete odd lines(English words)
+#delete <td> and <u> tags
+#change all uppercase letter to lower case
+#substitude all space and , with newline
+#delete all entries that contain letters 
+other than Hawaiian letters.
+#sort the file with no duplicate entries
+
+5. spell checking
+use
+tr -cs 'A-Za-z' '[\n*]' < assign2.html |
+ tr -s [:upper:] [:lower:] | 
+sort -u | comm -23 - words > misE  
+to record all the mispelled English words
+
+tr -cs "pk\'mnwlhaeiou" '[\n*]' < assign2.html
+ | tr -s [:upper:] [:lower:] | sort -u |
+ comm -23 - hwords > misH  to record mispelled 
+Hawaiian words
+
+Then I use wc -w misE to find that there are 70
+ mispelled English words
+
+wc -w misH find there are 193 mispelled Hawaiian words.
+
+I use comm -12 misE hwords > misEasH  to find the common
+words in hawaiian dictionary and mispelled English words.
+Then I use wc -w misEasH to find that there is one English
+words mispelled as Hawaiian words. It is "lau".
+
+I use comm -12 misH words > misHasE to find the common 
+words in English dictionary and mispelled Hawaiian words.
+Then I use wc -w to misHasE to find that there are 108 
+words mispelled as English words. Example: ail, imp, name    

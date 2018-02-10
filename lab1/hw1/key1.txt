@@ -1,0 +1,111 @@
+Ex 1.1
+1.
+e m a c s SP e x e r 1 . h t m l Enter
+
+2.
+C-s P U B L I C Enter
+
+3.
+C-s L a b o r a t o r y Enter M-b
+
+4.
+C-s s e l f - r e f e r e n t i a l Enter M-b M-b
+
+5.
+C-s a r r o w Enter M-b
+
+6.
+C-e
+7.
+C-a
+8.
+presented above
+9.
+No
+10.
+C-x C-c
+
+Ex 1.2
+1.
+e m a c s SP e x e r 2 . h t m l
+2.
+C-u 1 8 C-n C-k
+3.
+C-s < ! - - D E L E T E M E Enter C-a C-k
+4.
+C-s h t t p s : / / e n C-s Enter M-a C-u 3 C-k
+5.
+C-s < ! - - Enter C-u 4 Backspace C-u 3 DEL
+C-s < ! - - Enter C-a C-k
+
+Ex1.3
+1. e m a c s SP e x e r 3 . h t m l
+2.M-% A s s i g n m e n t SP 1 Enter A s s i g n m e n t 37 Enter y y q
+3.M-% U T F - 8 ENTER U S - A S C I I ENTER .
+4.C-s < / o l > Enter C-a Enter 
+5.C-x C-s C-x C-c
+
+Ex1.4
+1.c a t SP e x e r 2 . h t m l SP e x e r 2 . d i f f SP > e x e r 4 . h t m l
+2.e m a c s SP e x e r 4 . h t m l
+3.M-> UP UP RIGHT C-SPC C-e M-w C-r < / h t m l C-r Enter C-n C-y
+4.M-> C-r < ! - - C-r Enter C-SPC C-s - - > Enter M-w C-r l i n e s C-r Enter M-f C-y
+
+M-> C-r < ! - - C-r C-r Enter C-SPC C-s - - > Enter M-w C-r S u b m i t C-r C-r Enter C-n C-n C-y Enter
+
+ M-> M-g g 370 Enter Right C-SPC C-e M-w C-r H o m e w o r k C-r C-n C-n C-y
+
+M-> M-g g 361 RIGHT C-SPC C-r - - > M-w C-r s c a v C-r C-n C-n C-y
+
+5.M-> C-SPC C-r - - - C-r Enter Backspace
+6.C-x u
+7.< ! - - M-% - - > Enter SP ENTER ! M-> - - > 
+8. there are 7 instances. M-< M-% < o l > Enter < O l > Enter !
+9.d i f f SP - u SP e x e r 1 . h t m l SP e x e r 4 . h t m l SP > e x e r 4 . d i f f 
+
+Ex 1.5
+1.C-x d ~ / Enter + j u n k Enter 
+2.Enter C-x  C-f hello.c
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n';
+  char b = '\\';
+  char q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn';%c  char b = '%c%c';%c  char q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);
+  return 0;
+}
+
+3.M-x c o m p i l e Backspace Backspace Backspace Backspace Backspace Backspace Backspace Backspace g c c SP - o SP  h e l l o SP h e l l o . c Enter
+
+4.M-x c o m p i l e Enter . / h e l l o Enter C-x o C-x C-w h e l l o - o u t Enter
+
+5.C-x o C-x h C-x h M-w C-x o C-y
+-*- mode: compilation; default-directory: "~/junk/" -*-
+Compilation started at Sat Apr  8 23:13:08
+
+./hello
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n';
+  char b = '\\';
+  char q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn';%c  char b = '%c%c';%c  char q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);
+  return 0;
+}
+
+Compilation finished at Sat Apr  8 23:13:08
+
+Ex 1.6
+1.C-b *scratch*
+2.( r a n d o m ) C-j
+3.( s e t q SP x SP ( r a n d o m 1 0 0) ) C-j ( s e t q SP y SP ( r a n d o m 1 0 0) ) C-j
+4. When x is negative and y is negative, I found the result is also negative, which is not correct.
+5. The result is not changed but it also output the hex and binary represetation of the result.
+6.It is not random. Computer generates random numbers based on certain seeds. So if the seed is the same, the sequence of numbers generated should be the same.
+7. When the two numbers are both positive or bot negative and the product is too large, it will cause overflow and thus generate incorrect output. So the probability of product overflow is the probability of generating wrong product.

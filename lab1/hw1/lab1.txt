@@ -1,0 +1,32 @@
+1.can use man -K 'theWordSpecified'. I searched man man to find it  
+
+2. cp program located at /bin/cp, I use 'which' command to locate the program file.
+wc program located at /usr/bin/wc, I use 'which' command to locate the program file.
+
+3.
+
+4.the file /etc/alternatives/emacs is executed. I use
+readlink /usr/bin/emacs to find the real file name pointed
+to by the softlink.
+
+5.g+s set the group ID for the specified file.
+o-x remove the 'execute' permission for other
+users that are not in the file's group
+I found them in man chmod
+
+6.find -mtime -21.
+I found it in man find. -21 means last modified in 21*24 hours.
+
+7.find -type d -mtime -21. I use man find to find the commmand.
+
+8.343 symbolic links. I first use 'which find' to locate the directory
+of find. The output is /usr/bin/find. So I use 'find /usr/bin -type l'
+to find all the symbolic links in that directory. And by reading the n
+umber of lines shown at the bottom of the *shell command output*
+buffer, I found there are 343 symbolic links in total. 
+
+9
+
+
+
+1 2 5 6 7 9 10

@@ -1,0 +1,47 @@
+#!/bin/bash
+SAVEIFS=$IFS
+IFS=$'\n' # use \n as delimiter to seperate file name
+dotFiles=`find $1 -maxdepth 1 -type f -name '.*' | sort -f` 
+#echo "$allFiles" 
+
+declare -a allFiles
+let num=0
+for FILE in $dotFiles
+do
+    allFiles[$num]=$FILE
+    let num+=1
+
+done 
+
+otherFiles=`find $1 -maxdepth 1 -type f ! -name '.*' | sort -f`
+
+for each in $otherFiles 
+do
+    allFiles[$num]=$each
+    let num+=1
+done
+
+IFS=$SAVEIFS
+
+
+for ((i=0; i<${#allFiles[@]};i++))
+do
+    if [ ! -r "${allFiles[$i]}" ];then
+	    echo "error: ${allFiles[$i]} is not readable"
+	continue
+    fi
+
+    let j=$i+1
+    
+   for((j;j<${#allFiles[@]};j++))
+   do
+       cmp -s "${allFiles[$i]}" "${allFiles[$j]}"
+    
+       if [ $? -eq 0 ]; then  #if exit status equals to 0
+	   #rm "${allFiles[j]}"
+	   ln -f "${allFiles[i]}" "${allFiles[j]}"
+       fi
+
+   done
+done
+

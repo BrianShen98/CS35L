@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+
+#This program outputs the difference between different versions of *.instenv and *.clauses
+
+if [ ! -z "$2" ]; then
+    echo "wrong number of arguments!"
+    exit
+
+fi
+
+if [ "$1" = "instenv" ] || [ "$1" = "clauses" ]; then
+    echo > diffFile.diff  #clear content if file exists, create one if not
+
+    for i in {0..468}
+    do
+	echo >> diffFile.diff
+	echo "File $i" >>  diffFile.diff
+	diff ./sentence-completed/$i.$1 ./tellmedave_data_original/$i.$1 >> diffFile.diff
+	if [ $? -gt 1 ]; then
+	    echo "File $i goes wrong!"
+	    exit
+	fi
+	    
+    done
+
+else 
+    echo "cannot recognize option!"
+    exit
+fi

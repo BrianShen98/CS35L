@@ -1,0 +1,126 @@
+1.can use man -K 'theWordSpecified'. I searched man man to find it  
+
+2. cp program located at usr/bin/cp, I use 'which' command to 
+locate the program file.
+wc program located at /usr/bin/wc, I use 'which' 
+command to locate the program file.
+
+3.w: show who is logged on and what they are doing
+  [: bash builtin command
+  X:(Xorg) is a full featured X server.
+
+I used echo $PATH to find the directories that store those executables.
+/usr/lib64/qt-3.3/bin:/u/eng/class/classjsh/
+perl5/bin:/usr/lib64/ccache:/usr/local/bin:/usr/bin:
+/usr/X11R6/bin:/u/eng/class/classjsh/bin
+
+THen I use find *each path listed above* -name '?' -executable
+to find all executables that have 1 character long.
+In /usr/bin, I found three executable X, w,[. 
+Then I use man w and man [ to find w and ['s functionality.
+But I cannot open man X. So I use cd /usr/bin and ls -l X
+to find that it is a symbolic link to Xorg. So I use man Xorg
+to find X's functionality. 
+
+
+4.the file /etc/alternatives/emacs is executed. I use
+readlink /usr/bin/emacs to find the real file name pointed
+to by the softlink.
+
+5.g+s set the group ID for the specified file.
+o-x remove the 'execute' permission for other
+users that are not in the file's group
+I found them in man chmod
+
+6.find -mtime -21.
+I found it in man find. -21 means last modified in 21*24 hours.
+
+7.find ~/ -type d -mtime -21. I use man find to find the commmand.
+
+8. 294 symbolic links.
+
+ I first use 'which find' to locate the directory
+of find. The output is /usr/bin/find. So I use 'find /usr/bin -type l'
+to find all the symbolic links in that directory. And by reading the n
+umber of lines shown at the bottom of the *shell command output*
+buffer, I found there are 294 symbolic links in total. 
+
+9. libfreeblpriv3.so is the oldest regular file in /usr/lib.
+
+ I use 'man ls' to find that I should use ls -tl to print all files from
+ newest to oldest. And since the file type of a regular file should
+ be '-', so the first 
+should be libfreeblpriv3.so.  
+
+10. locale gets its data from locale difinition files whose default path is
+/usr/share/i18n/locales. The locale definition files
+ are compiled by localedef ,and the default path for compiled
+ individual locale data files is /usr/lib/locale.
+In other words, locale also gets its data from /usr/lib/locale.  
+
+I first use 'man locale' to find that locale output setting based on the 
+environment variables. And by using man -k locale, I found locale(7) and 
+localedef(1) 
+might be usefel since they contain the locale definition files. Then I use
+ man 5 locale to find localdef compile all the definition file to 
+form a database. Then I use man localedef to find the default locale 
+definition file location.
+
+11. 
+Buffer-menu-sort	      M-x ... RET
+   Sort Tabulated List entries by the column at point.
+sort-columns		      M-x ... RET
+   Sort lines in region alphabetically by a certain range of columns.
+sort-fields		      M-x ... RET
+   Sort lines in region lexicographically by the ARGth field of each
+   line.
+sort-lines		      M-x ... RET
+   Sort lines in region alphabetically; argument means descending
+   order.
+sort-numeric-fields	      M-x ... RET
+   Sort lines in region numerically by the ARGth field of each line.
+sort-pages		      M-x ... RET
+   Sort pages in region alphabetically; argument means descending
+   order.
+sort-paragraphs		      M-x ... RET
+   Sort paragraphs in region alphabetically; argument means descending
+   order.
+sort-regexp-fields	      M-x ... RET
+   Sort the text in the region region lexicographically.
+tabulated-list-col-sort	      M-x ... RET
+   Sort Tabulated List entries by the column of the mouse click E.
+tabulated-list-sort	      M-x ... RET
+   Sort Tabulated List entries by the column at point.
+
+I use C-h a then enter the string 'sort' to find all commands
+ that have sort in their names.
+
+12.C-M-a: move backward to the beginning of a defun.
+C-M b: move backward across one balanced expression.
+C-M c: Exit from the innermost recursive edit or minibuffer.
+C-M d: Move forward down one level of parentheses.
+C-M e: Move forward to next end of defun.
+C-M f: Move forward across one balanced expression (sexp).
+C-M g: Does not exist. Will show the explanation of C-g
+C-M h: Put mark at end of this defun, point at beginning.
+The defun marked is the one that contains point or follows point.
+
+I use C-h k to find the explanation.
+
+13.C-g:
+Signal a `quit' condition.
+During execution of Lisp code, this character causes a quit directly.
+At top-level, as an editor command, this simply beeps.
+
+I use C-h k C-g to find it.
+ 
+14.Reinsert ("paste") the last stretch of killed text.
+I use C-h f yank to find it.
+
+15. the output of dired contain two more entries: curruent directory
+ and parent 
+directory(. and ..). And the first line in dired will 
+print out total 345824, available 11769808, while ls -l only print 
+out total amount.
+
+I use cd/usr/bin and  C-x d and ls -l to find the result.

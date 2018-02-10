@@ -1,0 +1,33 @@
+Q1:
+It is not necessary. This line does not have any prurpose. Brady deleted this
+line since it is merely a repetition of the following line. And if he did not
+delete this line, nothing will be changed.
+
+Q2:
+After the change, if a locale has no translation,
+the timestamp will set to POSIX one,
+which contains English words. So if users don't know English, they will
+have trouble understanding the date.  
+
+Q3:
+The output is:
+Traceback (most recent call last):
+  File "./randline.py", line 70, in <module>
+    main()
+  File "./randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "./randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/usr/lib64/python2.7/random.py", line 274, in choice
+    return seq[int(self.random() * len(seq))]
+    # raises IndexError if seq is empty
+IndexError: list index out of range
+
+It shows an IndexError since in random module it defines that if seq is
+empty, which is this case, it will return an IndexError.
+Q4:
+python 3 output a sytax error notation but python 2 will interpret seccessfully.
+The reason is that python3 has merged
+EnvironmentError, IOError,WindowsError, ect. into OSError.
+So IOError is no longer available in python3.
+

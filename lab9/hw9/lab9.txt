@@ -1,0 +1,236 @@
+1. get a copy
+I use:
+
+git clone https://git.savannah.gnu.org/git/diffutils.git
+
+to get a copy of the repo.
+
+
+2.get a log of changes
+git log > git-log.txt
+
+3.get a list of tags
+git tag > git-tags.txt
+
+4. find the commit and generate a patch
+I first use C-s to search 
+“maint: quote 'like this' or "like this", not `like this'” in git-log.txt,
+and find the hash of it is:62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f.
+
+Then I use 
+git format-patch -1 --stdout 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f > quote-patch.txt to put it into quote-patch.txt
+
+5.checkout v3.0
+
+I use 
+git checkout v3.0 -b "v3.0Update" to checkout the 3.0 version and create a new 
+branch called "v3.0Update" for it to commit to.
+
+6. patch the v3.0 
+I use patch -p1 < quote-patch.txt to patch the v3.0 commit. 
+
+Problems:
+a.can't find file to patch:
+HACKING
+diffutils.texi
+help2man
+
+b.patch failed:
+
+README:
+Hunk #1 FAILED at 9.
+Hunk #3 FAILED at 60.
+2 out of 3 hunks FAILED -- saving rejects to file README.rejHunk #1 FAILED at 9.
+Hunk #3 FAILED at 60.
+
+README-hacking:
+Hunk #1 FAILED at 19.
+1 out of 1 hunk FAILED -- saving rejects to file README-hacking.rej
+
+cfg.mk:
+Hunk #1 FAILED at 29.
+1 out of 1 hunk FAILED -- saving rejects to file cfg.mk.rej
+
+c.some part of patches failed:
+diff.c
+diff3.c
+
+
+7. Overview
+The output of "git status" is
+
+# On branch v3.0Update
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   NEWS
+#	modified:   README
+#	modified:   TODO
+#	modified:   doc/diagmeet.note
+#	modified:   ms/config.bat
+#	modified:   ms/config.site
+#	modified:   po/en.po
+#	modified:   src/analyze.c
+#	modified:   src/cmp.c
+#	modified:   src/context.c
+#	modified:   src/diff.c
+#	modified:   src/diff.h
+#	modified:   src/diff3.c
+#	modified:   src/dir.c
+#	modified:   src/ifdef.c
+#	modified:   src/io.c
+#	modified:   src/sdiff.c
+#	modified:   src/side.c
+#	modified:   src/system.h
+#	modified:   src/util.c
+#	modified:   tests/help-version
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	NEWS.orig
+#	README-hacking.orig
+#	README-hacking.rej
+#	README.orig
+#	README.rej
+#	cfg.mk.orig
+#	cfg.mk.rej
+#	git-log.txt
+#	git-tags.txt
+#	ms/config.site.orig
+#	quote-patch.txt
+#	src/cmp.c.orig
+#	src/context.c.orig
+#	src/diff.c.orig
+#	src/diff.c.rej
+#	src/diff.h.orig
+#	src/diff3.c.orig
+#	src/diff3.c.rej
+#	src/dir.c.orig
+#	src/sdiff.c.orig
+#	src/system.h.orig
+#	src/util.c.orig
+#	ter
+#	tests/help-version.orig
+no changes added to commit (use "git add" and/or "git commit -a")
+
+It shows all files that have been modified and those untracked files newly
+created in the working space.
+
+8. Learn to use vc=diff(C-x v =) and vc-revert(C-x v u)
+vc-diff can be used in Dired mode or just on files. It will display a diff file
+in *vc-diff* buffer that shows the changes you've made on the file since 
+you check out the commit.
+
+and vc-reverot(C x v u) will revert all changes to the file.
+diff-apply-hunk(C-c C-a) will apply the current hunk to its target file while
+diff-goto-source(C-c C-c) will go to the line indicated by the hunk in source file
+
+9.revert changes
+
+a.Files other than .c
+I revert the changes made on 
+NEWS, README, TODO, doc/diagmeet.note, ms/config.bat,
+ms/config.site, po/en.po, src/diff.h, src/system.h, tests/help-version
+
+I opened each file and use C-x v u to revert the changes made.
+
+b. *.c files
+I use C-x v = to see the diff file, and use C-n to go through each hunk and
+C-c C-c to see the location of the modification in source code to decide
+whether current hunk need to be reverted. If it needs to be reverted,
+I use C-u C-c C-a to revert the hunk.
+
+The hunks reverted:
+
+analyze.c: all hunks reverted
+cmp.c: 36, 364, 337
+context.c: 159, 289, 393, 431, 459
+diff.c: 40, 57, 92
+diff3.c: 35, 159, 1475
+dir.c: 84, 125, 234
+io.c: all hunks reverted
+ifdef.c: all hunks reverted
+sdiff.c: 35, 92, 747
+side.c: all hunks reverted
+util.c: 27, 121, 146, 190, 241, 270, 650
+
+10. copy rejected patch to *.c
+I use M-g g to go to line number specified
+use C-s to search content
+and patch those *c..rej to *.c
+
+There are only two .rej: diff.c.rej and diff3.c.rej. And I patched them successfully.
+
+11. Remove all untracked files
+I use 
+find . -name "*.rej" -delete
+find . -name "*.orig" -delete
+
+to remove those untracked files.
+
+
+12. git diff and git status
+
+git status:
+
+#       modified:   src/cmp.c
+#       modified:   src/diff.c
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/sdiff.c
+#       modified:   src/util.c
+
+
+git diff > quote-3.0-patch.txt  It has 327 lines
+
+
+13. Build the Diffutils
+I first use 
+
+./bootstrap
+I then apply the addition patch since I do this lab on lnxsrv09:
+
+touch addPatch.diff
+patch -p0 < addPatch.diff
+
+and then 
+
+./configure
+make
+make check
+
+After doing the above step, I use "./src/diff . -" and "./src/diff --help" to check the 
+new version. Both give the correct quotation mark ' rather than `.
+
+14.sanity test
+
+cd ..
+mkdir diffutils-3.0
+mkdir diffutils-3.0-patch
+
+Then I copy the source code of those two version into the two directories above:
+
+cp diffutils/src/*.c ./diffutils-3.0-patch
+cd diffutils-3.0
+git clone https://git.savannah.gnu.org/git/diffutils.git
+git checkout v3.0 -b "newBranch"
+cp diffutils/src/*.c .
+rm -rf diffutils
+
+Now the two directories only contain the source code of the two version of diff.
+And I run the diff command:
+
+./diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch/ > quote-3.0-test.txt
+
+to output the difference.
+
+
+15. compare quote-3.0-test.txt and quote-3.0-patch.txt
+
+I use 
+diff quote-3.0-test.txt quote-3.0-patch.txt > difference.diff
+to compare these two text file. 
+Though it seems like there are lots of difference, the difference are mainly
+from paths for files and hashes. So the differences are inncuous.

@@ -1,0 +1,41 @@
+1. create a large test file
+I use
+od -tfF -An -N 40000000 < /dev/urandom | tr -s " " "\n" > test
+to create the test file that contains 10000000 single-precision
+floating point numbers since each number of tis type is 4 bytes long. And I
+opened the file with emacs and delete the leading new line character.
+
+2. compare 'sort' with and without parallelism
+I first use the command: time -p sort -g test > /dev/null, and the output is
+real 30.35
+user 156.57
+sys 0.49
+
+Then I use time -p sort -g --parallel=1 test > /dev/null, and the output is
+real 101.77
+user 101.57
+sys 0.19
+
+Then I use time -p sort -g --parallel=2 test > /dev/null, and the output is
+real 58.02
+user 110.21
+sys 0.29
+
+And when using time -p sort -g --parallel=4 test> dev/null, the output is
+real 34.36
+user 113.76
+sys 0.37
+
+And when using time -p sort -g --parallel=8 test> dev/null, the output is
+real 28.15
+user 149.77
+sys 0.51
+
+only when using 8 thread option for parallelism does the sort run faster than
+without --parallel option. I think the reason for the result is that it when
+not specifying the number of thread, sort will automatically use some parallelism
+mechanism by default.
+
+
+
+

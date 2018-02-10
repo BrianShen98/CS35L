@@ -1,0 +1,12 @@
+1.upper parts
+The upper window visualizes the whole history of commits, their relation 
+the author of the commits, and the date of the commit. Also, it displays the
+SHA1 ID of each commit.
+
+2.lower parts
+The lower left window shows the ChangeLog and actual content of the specific commit. 
+We can choose to view the content in "Diff" "Old version" "New Version" modes.
+
+The lowerright window shows the hierarchy of the commit. If in "Patch" mode,
+it will show the hierarchy of the content in lower right window. If in "Tree"
+mode, it will show the hierarchy of the tree of the commit.

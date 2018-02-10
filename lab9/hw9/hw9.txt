@@ -1,0 +1,88 @@
+2.
+cd diffutils
+checkout v3.0 -b "quote"
+
+3.Install changes
+patch -p1 < ../../qupte-3.0-patch.txt
+and the output:
+
+patching file src/cmp.c
+patching file src/diff.c
+patching file src/diff3.c
+patching file src/dir.c
+patching file src/sdiff.c
+patching file src/util.c
+
+shows patches are applied successfully.
+
+
+4&5. Make a ChangeLog
+ 
+I opened git-log.txt to find the original ChangeLog for the original patch.
+And then I use "C-x 4 a" to create changeLog for each modified *.c file in the
+style of the original ChangeLog. The ChangeLog I made is shown below:
+
+2017-06-04  Jingyue Shen  <classjsh@lnxsrv09.seas.ucla.edu>
+
+    * src/cmp.c (try_help, specify_ignore_initial, usage, main):
+    * src/diff.c (main, try_help, option_help_msgid, specify_value)
+    (compare_files):
+    * src/diff3.c (main, try_help, option_help_msgid, usage)
+    (read_diff):
+    * src/dir.c (compare_names):
+    * src/sdiff.c (try_help, usage, check_child_status, main):
+    * src/util.c (finish_output):
+    Quote 'like this' instead of `like this' in output.
+
+
+6.Commit the change
+
+"git commit -aF ChangeLog" to commit. The changes are committed successfully.
+
+7.generate patch
+
+I first use "git log" to see the hash of my commit, which is 
+65441cda9c2883f53e1c036361f7162ee18d0a35
+
+Then I use "git format-patch -1 --stdout 65441cda9c2883f53e1c036361f7162ee18d0a35 > formatted-patch.txt" 
+to generate the patch.
+
+
+8. Verification of partner's ChangeLog
+
+Partner's name: Zipeng Fu
+
+I renamed his patch to "mk-formatted-patch.txt". And checkout version 3.0 to partner:
+git checkout v3.0 -b partner
+
+And then use 
+git am mk-formatted-patch.txt to apply the patch:
+Applying: 2017-06-04 Zipeng Fu <classzfu@lnxsrv09.seas.ucla.edu>
+
+To make the diff, I use:
+./bootstrap
+patch -p0 < addPatch.diff
+./configure
+make
+make check
+
+Then I ran "diff - ." and "diff --help". It works.
+
+
+9.Verify my ChangeLog works
+
+I typed "make distdir", and it creates a directory:
+diffutils-3.0.1-ae25
+
+I opened the the ChangeLog file in it, and find that the first entry is
+my ChangeLog. So it works.
+
+10.Run gitk
+I first use
+export PATH=/usr/local/cs/bin:$PATH
+
+Since I've downloaded the X server, I use:
+gitk ~eggert/src/gnu/emacs to open the repository.
+
+And I find the newest merge not newer than 2015-1-25 is 
+Merge branch 'master' into xwidget 2015-01-25 12:19:27
